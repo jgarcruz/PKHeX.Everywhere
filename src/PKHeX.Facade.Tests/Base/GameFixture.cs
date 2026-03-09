@@ -10,7 +10,7 @@ public static class GameFixture
     public static void SaveAndReload(this Game game, Action<Game> afterReload)
     {
         var byteArray = game.ToByteArray();
-        var reloadedSave = SaveUtil.GetVariantSAV(byteArray, game.SaveFile.Metadata.FilePath);
+        var reloadedSave = SaveUtil.GetSaveFile(byteArray, game.SaveFile.Metadata.FilePath);
         reloadedSave.Should().NotBeNull();
 
         var reloadedGame = new Game(reloadedSave!);
@@ -21,7 +21,7 @@ public static class GameFixture
 public class SupportedSaveFilesAttribute : DataAttribute
 {
     public GameVersion[] Except { get; set; } = [];
-    
+
     public override IEnumerable<object[]> GetData(MethodInfo testMethod) => TestedVersions
         .Except(Except)
         .Select(SaveFilePath.PathFrom)

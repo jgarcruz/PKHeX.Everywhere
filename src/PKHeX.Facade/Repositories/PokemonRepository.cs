@@ -19,14 +19,14 @@ public class PokemonRepository
     {
         var settings = new SearchSettings
         {
-            Format = _saveFile.Generation,
+            Context = _saveFile.Context,
             Generation = _saveFile.Generation,
 
             Species = (ushort)species,
             SearchShiny = shiny,
             SearchEgg = egg,
 
-            Version = version, 
+            Version = version,
         };
 
         var personalInfo = _saveFile.Personal.GetFormEntry(settings.Species, 0);
@@ -43,7 +43,7 @@ public class PokemonRepository
         template.Species = settings.Species;
         template.Form = (byte)form;
         template.SetGender(template.GetSaneGender());
-        
+
         EncounterMovesetGenerator.OptimizeCriteria(template, _saveFile);
         return EncounterMovesetGenerator
             .GenerateEncounters(template, settings.Moves.ToArray(), settings.GetVersions(_saveFile))

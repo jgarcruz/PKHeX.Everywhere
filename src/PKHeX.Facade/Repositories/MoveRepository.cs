@@ -27,11 +27,11 @@ public class MoveRepository
             .Zip(pokemon.Moves.Values)
             .Where(m => m.Second.Move != MoveDefinition.None && m.First.Valid)
             .Select(m => m.Second.Move.Id);
-        
+
         var learnSource = GameData.GetLearnSource(pokemon.Game.SaveFile.Version);
         var learnSet = learnSource.GetLearnset(pokemon.Pkm.Species, pokemon.Pkm.Form);
-        
-        var moves = learnSet.GetMoveRange(pokemon.Level)
+
+        var moves = learnSet.GetMoveRange((byte)pokemon.Level)
             .ToImmutableArray().AddRange(possibleCurrentMoves)
             .ToHashSet();
 

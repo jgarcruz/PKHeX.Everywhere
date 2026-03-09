@@ -8,12 +8,14 @@ namespace PKHeX.Facade;
 public class Inventory : IEnumerable<Inventory.Item>
 {
     private readonly Game _game;
+    private readonly PlayerBag _bag;
     private readonly InventoryPouch _pouch;
 
     public Inventory(string type, Game game)
     {
         _game = game;
-        _pouch = _game.SaveFile.Inventory.FirstOrDefault(i => i.Type.ToString() == type)
+        _bag = _game.SaveFile.Inventory;
+        _pouch = _bag.Pouches.FirstOrDefault(i => i.Type.ToString() == type)
             ?? throw new InvalidOperationException($"Inventory of type {type} not found");
 
         Type = type;
@@ -30,7 +32,7 @@ public class Inventory : IEnumerable<Inventory.Item>
     /// Returns the max count a single item can have
     /// </summary>
     public int MaxItemCountAllowed => _pouch.MaxCount;
-    
+
     /// <summary>
     /// Returns a list of all items supported in this inventory
     /// </summary>
@@ -45,7 +47,7 @@ public class Inventory : IEnumerable<Inventory.Item>
     public ImmutableList<ItemDefinition> CurrentSupportedItems => AllSupportedItems
         .Except(Items.Select(i => i.Definition))
         .ToImmutableList();
-    
+
     public bool Supports(ItemDefinition item) =>
         AllSupportedItems.Any(i => i.Id == item.Id);
 
@@ -66,23 +68,21 @@ public class Inventory : IEnumerable<Inventory.Item>
         {
             throw new InvalidOperationException("Cannot set item to None.");
         }
-        
+
         if (AllSupportedItems.All(i => i.Id != itemId))
         {
             throw new InvalidOperationException($"Item {itemId} is not supported in this inventory.");
         }
 
         _pouch.RemoveAll(i => i.Index == itemId);
-        _pouch.GiveItem(_game.SaveFile, itemId, Convert.ToInt32(count));
+        _pouch.GiveItem(_bag, itemId, Convert.ToInt32(count));
 
         Commit();
     }
 
     private void Commit()
     {
-        _game.SaveFile.Inventory = _game.SaveFile.Inventory
-            .Select(i => i.Type.ToString() == Type ? _pouch : i)
-            .ToImmutableList();
+        _bag.CopyTo(_game.SaveFile);
     }
 
     private ImmutableList<Item> GetItems()
@@ -109,7 +109,7 @@ public class Inventory : IEnumerable<Inventory.Item>
 
         public bool IsNone => Id == ItemDefinition.None;
         public ItemDefinition Definition => _itemFetcher(Id);
-        
+
         public override string ToString() => $"{Name} x{Count}";
     }
 }

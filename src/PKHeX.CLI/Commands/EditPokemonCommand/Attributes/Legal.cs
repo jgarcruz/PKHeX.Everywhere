@@ -22,21 +22,21 @@ internal class Legal(Pokemon pokemon) : EditPokemonAttribute(pokemon)
     {
         var displays = _legalityAnalysis.Results.Select(a => a.Judgement switch
         {
-            Severity.Valid => $"* [green]{a.Identifier}: {a.Comment}[/]",
-            Severity.Fishy => $"* [yellow]{a.Identifier}: {a.Comment}[/]",
-            Severity.Invalid => $"* [red]{a.Identifier}: {a.Comment}[/]",
+            Severity.Valid => $"* [green]{a.Identifier}: {a.Result.GetTemplate(LegalityCheckLocalization.Get())}[/]",
+            Severity.Fishy => $"* [yellow]{a.Identifier}: {a.Result.GetTemplate(LegalityCheckLocalization.Get())}[/]",
+            Severity.Invalid => $"* [red]{a.Identifier}: {a.Result.GetTemplate(LegalityCheckLocalization.Get())}[/]",
             _ => string.Empty,
         });
-                
+
         var display = string.Join(Environment.NewLine, displays);
-                
+
         AnsiConsole.Prompt(new SelectionPrompt<OptionOrBack>()
             .Title(display)
             .PageSize(10)
             .AddChoices(OptionOrBack.WithValues(
                 options: Enumerable.Empty<OptionOrBack>()))
             .WrapAround());
-                
+
         return Result.Continue;
     }
 }

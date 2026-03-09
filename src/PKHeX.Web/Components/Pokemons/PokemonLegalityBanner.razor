@@ -5,10 +5,10 @@
         <ul>
             @foreach (var failure in Failures)
             {
-                <li>@failure.Identifier: @failure.Comment</li>
+                <li>@failure.Identifier: @failure.Result.GetTemplate(LegalityCheckLocalization.Get())</li>
             }
         </ul>
-    </Alert>   
+    </Alert>
 }
 
 @code {
