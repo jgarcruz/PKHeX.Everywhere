@@ -7,7 +7,7 @@ namespace PKHeX.Facade;
 public class Trainer
 {
     private readonly Game _game;
-    
+
     public Trainer(Game game)
     {
         _game = game;
@@ -27,6 +27,8 @@ public class Trainer
         set => _game.SaveFile.Gender = value.ToByte();
     }
 
+    // TODO: add a way to edit player money
+    // might also need an abstraction to access other currency types (ex: BP)
     public Money Money { get; }
     public Inventories Inventories { get; private set; }
     public PokemonParty Party { get; private set; }
@@ -52,7 +54,7 @@ public class Trainer
             PokemonSource.Party => Party,
             _ => throw new InvalidOperationException($"{source} is not supported when updating pokemon"),
         };
-        
+
         collection.AddOrUpdate(id, pokemon);
     }
 

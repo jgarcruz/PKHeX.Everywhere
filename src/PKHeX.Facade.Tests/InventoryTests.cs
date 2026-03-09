@@ -20,7 +20,7 @@ public class InventoryTests
     {
         var game = Game.LoadFrom(saveFile);
         game.Trainer.Inventories.InventoryTypes.Should().Contain("Balls");
-        
+
         var ballInventory = game.Trainer.Inventories.InventoryItems["Balls"];
         ballInventory.AllSupportedItems.Should().Contain(MasterBall);
     }
@@ -37,6 +37,28 @@ public class InventoryTests
         {
             reloadedGame.Trainer.Inventories.InventoryItems["Balls"].Items
                 .Should().ContainSingle(i => i.Id == MasterBall.Id && i.Count == 5);
+        });
+    }
+
+    [Theory]
+    [SupportedSaveFiles]
+    public void Inventories_ShouldPersistMultipleChanges(string saveFile)
+    {
+        var game = Game.LoadFrom(saveFile);
+        var ballInventory = game.Trainer.Inventories.InventoryItems["Balls"];
+        ballInventory.Set(MasterBall.Id, 5);
+        ballInventory.Set(GreatBall.Id, 22);
+
+        game.SaveAndReload(reloadedGame =>
+        {
+            reloadedGame.Trainer.Inventories.InventoryItems["Balls"].Items
+                .Should().ContainSingle(i => i.Id == MasterBall.Id && i.Count == 5);
+        });
+
+        game.SaveAndReload(reloadedGame =>
+        {
+            reloadedGame.Trainer.Inventories.InventoryItems["Balls"].Items
+                .Should().ContainSingle(i => i.Id == GreatBall.Id && i.Count == 22);
         });
     }
 
@@ -64,7 +86,7 @@ public class InventoryTests
         var rareCandyBag =
             game.Trainer.Inventories.InventoryItems.Values.FirstOrDefault(i =>
                 i.AllSupportedItems.Any(s => s.Name == "Rare Candy"));
-        
+
         rareCandyBag.Should().NotBeNull();
 
         var rareCandyDefinition = rareCandyBag!.AllSupportedItems.First(s => s.Name == "Rare Candy");
