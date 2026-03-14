@@ -33,9 +33,9 @@ public sealed class PkCommand : Command<PkCommand.Settings>
             AnsiConsole.MarkupLine($"[red]PKHeX CLI[/]: [yellow]{settings.Version?.ToString(3)}[/]");
             return 0;
         }
-        
+
         PrintHeader(settings);
-        
+
         return Run(settings.ResolveSaveFilePath(), settings);
     }
 
@@ -47,7 +47,7 @@ public sealed class PkCommand : Command<PkCommand.Settings>
                 .Color(Color.Red));
 
         if (settings.Version is null) return;
-        
+
         AnsiConsole.WriteLine();
         AnsiConsole.MarkupLine($"[red]version {settings.Version?.ToString(3)}[/]");
         AnsiConsole.WriteLine();
@@ -56,7 +56,7 @@ public sealed class PkCommand : Command<PkCommand.Settings>
     private int Run(string path, Settings settings)
     {
         var game = Game.LoadFrom(path);
-        
+
         AnsiConsole.MarkupLine(string.Empty);
         AnsiConsole.MarkupLine($"Successfully loaded the save state at: [blue]{path}[/]");
         AnsiConsole.MarkupLine(string.Empty);
@@ -86,13 +86,13 @@ public sealed class PkCommand : Command<PkCommand.Settings>
                 _ => Result.Continue
             };
         });
-        
+
         return 0;
     }
-    
+
     private static class Choices
     {
-        public const string ViewTrainerInfo = "View Trainer Info";
+        public const string ViewTrainerInfo = "View/Edit Trainer Info";
         public const string ViewPokemonParty = "View/Edit Pokémon Party";
         public const string ViewPokemonBox = "View/Edit Pokemon Box";
         public const string ViewInventory = "View/Edit Inventory";
@@ -105,16 +105,16 @@ public sealed class PkCommand : Command<PkCommand.Settings>
         [Description("The path to the save file. Default to ./data/savedata.bin")]
         [CommandArgument(0, "[savefile]")]
         public string? SaveFilePath { get; set; }
-        
+
         [CommandOption("-v|--version")]
         [DefaultValue(false)]
         public bool ShowVersion { get; init; }
 
         public PersistedSettings PersistedSettings { get; } = PersistedSettings.Load();
         public Version? Version => Assembly.GetExecutingAssembly().GetName().Version;
-        
+
         public string ResolveSaveFilePath() => SaveFilePath ?? PersistedSettings.LastSaveFilePath ?? LocalDebugSaveFile;
-        
+
         private const string LocalDebugSaveFile = "./data/savedata.bin";
     }
 }
