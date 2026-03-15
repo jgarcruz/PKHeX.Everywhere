@@ -2,6 +2,3 @@
 	path = external/PKHeX-Plugins
 	url = https://github.com/jgarcruz/PKHeX-Plugins.git
 	branch = cherrytree
-[submodule "external/PKHeX"]
-	path = external/PKHeX
-	url = https://github.com/jgarcruz/PKHeX.git

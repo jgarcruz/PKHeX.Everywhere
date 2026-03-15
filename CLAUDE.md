@@ -32,7 +32,7 @@ git submodule update --init --recursive
 
 ## Architecture
 
-The repository is a .NET 9 solution providing two frontends (CLI and Blazor WebAssembly web app) on top of a shared facade library, all wrapping the upstream PKHeX.Core engine.
+The repository is a .NET 10 solution providing two frontends (CLI and Blazor WebAssembly web app) on top of a shared facade library, all wrapping the upstream PKHeX.Core engine.
 
 ### Dependency direction
 
@@ -42,15 +42,14 @@ PKHeX.Web
   └── PKHeX.Web.Plugins (SDK)
         └── PKHeX.Facade
               └── PKHeX.Core.AutoMod (external submodule)
-                    └── PKHeX.Core (external submodule)
+                    └── PKHeX.Core (NuGet 26.03.06)
 ```
 
 ### External submodules
 
-- `external/PKHeX` — forked PKHeX.Core and drawing libraries
-- `external/PKHeX-Plugins` (branch: `cherrytree`) — forked AutoMod/AutoLegality plugins
+- `external/PKHeX-Plugins` (branch: `cherrytree`) — forked AutoMod/AutoLegality plugins; references `PKHeX.Core` via NuGet
 
-PKHeX.Facade references `PKHeX.Core` via local project reference (not NuGet) to stay in sync with the fork.
+`PKHeX.Core` is consumed as a NuGet package (version `26.03.06`) transitively through `PKHeX.Core.AutoMod`.
 
 ### PKHeX.Facade (`src/PKHeX.Facade/`)
 

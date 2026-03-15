@@ -32,8 +32,6 @@ public class Trainer
         set => _game.SaveFile.Gender = value.ToByte();
     }
 
-    // TODO: add a way to edit player money
-    // might also need an abstraction to access other currency types (ex: BP)
     public Money Money { get; }
     public Inventories Inventories { get; private set; }
     public PokemonParty Party { get; private set; }
