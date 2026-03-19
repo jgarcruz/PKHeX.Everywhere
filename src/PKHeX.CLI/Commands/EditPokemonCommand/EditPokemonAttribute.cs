@@ -3,6 +3,7 @@ using PKHeX.CLI.Extensions;
 using PKHeX.Facade.Extensions;
 using PKHeX.Facade.Pokemons;
 using Spectre.Console;
+using PKHeX.Core;
 
 namespace PKHeX.CLI.Commands.EditPokemonCommand;
 
@@ -43,7 +44,7 @@ abstract class EditPokemonAttribute(Pokemon pokemon)
         }
     }
 
-    public class Name(Pokemon pokemon) : SimpleAttribute(pokemon, "Name/Nickname", () => pokemon.Nickname)
+    public class NameAttribute(Pokemon pokemon) : SimpleAttribute(pokemon, "Name/Nickname", () => pokemon.Nickname)
     {
         public override Result HandleSelection()
         {
@@ -58,7 +59,7 @@ abstract class EditPokemonAttribute(Pokemon pokemon)
         }
     }
 
-    public class Level(Pokemon pokemon) : SimpleAttribute(pokemon, "Level", () => pokemon.Level.ToString())
+    public class LevelAttribute(Pokemon pokemon) : SimpleAttribute(pokemon, "Level", () => pokemon.Level.ToString())
     {
         public override Result HandleSelection()
         {
@@ -72,16 +73,26 @@ abstract class EditPokemonAttribute(Pokemon pokemon)
         }
     }
 
-    public class Nature(Pokemon pokemon) : EditPokemonAttribute(pokemon)
+    // upon selecting this we need a dropdown to show with each nature enum and have the user select 1
+    // highlight the one the pokemon already is
+    public class NatureAttribute(Pokemon pokemon) : SimpleAttribute(pokemon, "Nature", () => pokemon.Natures.Nature.ToString())
     {
-        protected override string Label => string.Empty;
-        protected override string Value => string.Empty;
+        public override Result HandleSelection()
+        {
+            var newNature = AnsiConsole.Prompt(
+                new SelectionPrompt<Nature>()
+                    .Title("Select nature:")
+                    .AddChoices(Enum.GetValues<Nature>())
+                    .UseConverter(n => n.ToString())
+            );
 
-        public override string Display =>
-            $"[yellow]Nature:[/] {Pokemon.Natures.Nature,-15} [yellow]Stat Nature:[/] {Pokemon.Natures.StatNature}";
+            Pokemon.Natures.ChangeNature(newNature);
+
+            return Result.Continue;
+        }
     }
 
-    public class Flags(Pokemon pokemon) : EditPokemonAttribute(pokemon)
+    public class FlagsAttribute(Pokemon pokemon) : EditPokemonAttribute(pokemon)
     {
         protected override string Label => string.Empty;
         protected override string Value => string.Empty;
@@ -91,7 +102,7 @@ abstract class EditPokemonAttribute(Pokemon pokemon)
                                           $"[yellow]Cured:[/] {Pokemon.Flags.IsCured.ToDisplayEmoji()}";
     }
 
-    public class IsShiny(Pokemon pokemon)
+    public class IsShinyAttribute(Pokemon pokemon)
         : SimpleAttribute(pokemon, "IsShiny", () => YesNoPrompt.LabelFrom(pokemon.IsShiny))
     {
         public override Result HandleSelection()
@@ -103,7 +114,7 @@ abstract class EditPokemonAttribute(Pokemon pokemon)
         }
     }
 
-    public abstract class PokemonStatsBase(Pokemon pokemon, string label, Stats stats)
+    public abstract class PokemonStatsBaseAttribute(Pokemon pokemon, string label, Stats stats)
         : SimpleAttribute(pokemon, label, string.Empty)
     {
         public override string Display => $"[yellow]{Label}:[/]{Environment.NewLine}   " +
@@ -116,9 +127,9 @@ abstract class EditPokemonAttribute(Pokemon pokemon)
                                           $"Total {stats.Total,-3} ";
     }
 
-    public class EV(Pokemon pokemon) : PokemonStatsBase(pokemon, "EV", pokemon.EVs);
+    public class EV(Pokemon pokemon) : PokemonStatsBaseAttribute(pokemon, "EV", pokemon.EVs);
 
-    public class IV(Pokemon pokemon) : PokemonStatsBase(pokemon, "IV", pokemon.IVs);
+    public class IV(Pokemon pokemon) : PokemonStatsBaseAttribute(pokemon, "IV", pokemon.IVs);
 
-    public class BaseStats(Pokemon pokemon) : PokemonStatsBase(pokemon, "Base", pokemon.BaseStats);
+    public class BaseStats(Pokemon pokemon) : PokemonStatsBaseAttribute(pokemon, "Base", pokemon.BaseStats);
 }

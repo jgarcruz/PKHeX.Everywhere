@@ -22,9 +22,9 @@ public class Pokemon(PKM pokemon, Game game)
 
     public EntityId Id => new(Pkm.DisplayTID, Pkm.DisplaySID);
     public Owner Owner => new(pokemon);
-    
+
     public uint PID => Pkm.PID;
-    
+
     public GameVersionDefinition Version => GameVersionRepository.Instance.Get(Pkm.Version);
 
     public SpeciesDefinition Species
@@ -183,7 +183,7 @@ public class Pokemon(PKM pokemon, Game game)
     }
 
     public static Pokemon LoadFrom(
-        byte[] bytes, 
+        byte[] bytes,
         Game? game = null)
     {
         var format =

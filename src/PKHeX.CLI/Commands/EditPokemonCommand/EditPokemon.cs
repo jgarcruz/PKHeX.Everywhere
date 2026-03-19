@@ -19,22 +19,22 @@ public static class EditPokemon
             [
                 new Legal(pokemon),
                 new EditPokemonAttribute.ReadOnlyAttribute(pokemon, "PID", () => pokemon.PID.ToString("X8")),
-                new EditPokemonAttribute.IsShiny(pokemon),
-                new EditPokemonAttribute.Name(pokemon),
-                new EditPokemonAttribute.Level(pokemon),
-                new EditPokemonAttribute.Nature(pokemon),
+                new EditPokemonAttribute.IsShinyAttribute(pokemon),
+                new EditPokemonAttribute.NameAttribute(pokemon),
+                new EditPokemonAttribute.LevelAttribute(pokemon),
+                new EditPokemonAttribute.NatureAttribute(pokemon),
                 new EditPokemonAttribute.ReadOnlyAttribute(pokemon, "Held item", pokemon.HeldItem.Name),
                 new EditPokemonAttribute.ReadOnlyAttribute(pokemon, "Ability", pokemon.Ability.Name),
                 new EditPokemonAttribute.ReadOnlyAttribute(pokemon, "Friendship", pokemon.Friendship.ToString()),
-                new EditPokemonAttribute.Flags(pokemon),
+                new EditPokemonAttribute.FlagsAttribute(pokemon),
 
                 new MetConditions(pokemon),
                 new ChangeMoves(pokemon),
                 new Stats(pokemon),
             ];
-        
+
             attributes = attributes.Where(a => !a.Hidden);
-            
+
             var selection = AnsiConsole.Prompt(new SelectionPrompt<OptionOrBack>()
                 .Title(
                     $"{Environment.NewLine}[yellow]Editing Pokemon: [yellow]{pokemon.NameDisplay()}[/][/]{Environment.NewLine}")
