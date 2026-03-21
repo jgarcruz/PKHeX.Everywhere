@@ -13,6 +13,8 @@ public class Pokemon(PKM pokemon, Game game)
     public UniqueId UniqueId => UniqueId.From(this);
     public PKM Pkm => pokemon;
     public Game Game => game;
+    public byte Generation => pokemon.Generation;
+
 
     public ItemDefinition Ball
     {
@@ -136,6 +138,53 @@ public class Pokemon(PKM pokemon, Game game)
 
         pokemon.SetMoves(newMoveSet);
         pokemon.FixMoves();
+    }
+
+    public bool ChangeNature(Nature newNature)
+    {
+        if (newNature == Pkm.Nature) return true;
+
+        var oldNature = Pkm.Nature;
+        if (Generation < 5)
+        {
+            RegeneratePID(nature: newNature);
+            return Pkm.Nature != oldNature;
+        }
+        else
+        {
+            Pkm.Nature = newNature;
+            return Pkm.Nature != oldNature;
+        }
+
+    }
+
+    // can stay as is since this wasn't a thing till gen 8
+    public bool ChangeStatNature(Nature newNature)
+    {
+        if (newNature == Pkm.StatNature) return true;
+
+        var oldNature = Pkm.StatNature;
+
+        Pkm.StatNature = newNature;
+
+        return Pkm.StatNature != oldNature;
+    }
+
+    public void RegeneratePID(
+        ushort? species = null,
+        byte? gender = null,
+        GameVersion? version = null,
+        Nature? nature = null,
+        byte? form = null)
+    {
+        Pkm.PID = EntityPID.GetRandomPID(
+            Random.Shared,
+            species ?? Pkm.Species,
+            gender ?? Pkm.Gender,
+            version ?? Pkm.Version,
+            nature ?? Pkm.Nature,
+            form ?? Pkm.Form,
+            Pkm.PID);
     }
 
     public Pokemon MakeCopy()

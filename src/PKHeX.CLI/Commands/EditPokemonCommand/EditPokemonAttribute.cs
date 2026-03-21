@@ -82,11 +82,12 @@ abstract class EditPokemonAttribute(Pokemon pokemon)
             var newNature = AnsiConsole.Prompt(
                 new SelectionPrompt<Nature>()
                     .Title("Select nature:")
+                    .EnableSearch()
                     .AddChoices(Enum.GetValues<Nature>())
                     .UseConverter(n => n.ToString())
             );
 
-            Pokemon.Natures.ChangeNature(newNature);
+            Pokemon.ChangeNature(newNature);
 
             return Result.Continue;
         }
