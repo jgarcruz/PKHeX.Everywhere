@@ -147,7 +147,7 @@ public class Pokemon(PKM pokemon, Game game)
         var oldNature = Pkm.Nature;
         if (Generation < 5)
         {
-            RegeneratePID(nature: newNature);
+            Pkm.SetPIDNature(newNature);
             return Pkm.Nature != oldNature;
         }
         else
@@ -168,23 +168,6 @@ public class Pokemon(PKM pokemon, Game game)
         Pkm.StatNature = newNature;
 
         return Pkm.StatNature != oldNature;
-    }
-
-    public void RegeneratePID(
-        ushort? species = null,
-        byte? gender = null,
-        GameVersion? version = null,
-        Nature? nature = null,
-        byte? form = null)
-    {
-        Pkm.PID = EntityPID.GetRandomPID(
-            Random.Shared,
-            species ?? Pkm.Species,
-            gender ?? Pkm.Gender,
-            version ?? Pkm.Version,
-            nature ?? Pkm.Nature,
-            form ?? Pkm.Form,
-            Pkm.PID);
     }
 
     public Pokemon MakeCopy()
