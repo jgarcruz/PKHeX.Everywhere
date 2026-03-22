@@ -23,7 +23,7 @@ public static class EditPokemon
                 new EditPokemonAttribute.NameAttribute(pokemon),
                 new EditPokemonAttribute.LevelAttribute(pokemon),
                 new EditPokemonAttribute.NatureAttribute(pokemon),
-                new EditPokemonAttribute.ReadOnlyAttribute(pokemon, "Held item", pokemon.HeldItem.Name),
+                new HeldItemAttribute(pokemon, game),
                 new EditPokemonAttribute.AbilityAttribute(pokemon),
                 new EditPokemonAttribute.FriendshipAttribute(pokemon),
                 new EditPokemonAttribute.FlagsAttribute(pokemon),
