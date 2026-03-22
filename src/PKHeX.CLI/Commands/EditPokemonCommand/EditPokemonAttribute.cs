@@ -80,15 +80,15 @@ abstract class EditPokemonAttribute(Pokemon pokemon)
     {
         public override Result HandleSelection()
         {
-            var newNature = AnsiConsole.Prompt(
-                new SelectionPrompt<Nature>()
+            var selection = AnsiConsole.Prompt(
+                new SelectionPrompt<OptionOrBack>()
                     .Title("Select nature:")
                     .EnableSearch()
-                    .AddChoices(Enum.GetValues<Nature>())
-                    .UseConverter(n => n.ToString())
+                    .AddChoices(OptionOrBack.WithValues(Enum.GetValues<Nature>()))
             );
 
-            Pokemon.ChangeNature(newNature);
+            if (selection is OptionOrBack.Option<Nature> option)
+                Pokemon.ChangeNature(option.Value);
 
             return Result.Continue;
         }
@@ -102,15 +102,17 @@ abstract class EditPokemonAttribute(Pokemon pokemon)
             if (choices.Count == 0)
                 return Result.Continue;
 
-            var newAbility = AnsiConsole.Prompt(
-                new SelectionPrompt<AbilityDefinition>()
+            var selection = AnsiConsole.Prompt(
+                new SelectionPrompt<OptionOrBack>()
                     .Title("Select ability:")
                     .EnableSearch()
-                    .AddChoices(choices)
-                    .UseConverter(a => a.Name)
+                    .AddChoices(OptionOrBack.WithValues(choices, a => a.Name))
             );
 
-            Pokemon.ChangeAbility(newAbility);
+            if (selection is not OptionOrBack.Option<AbilityDefinition> option)
+                return Result.Continue;
+
+            Pokemon.ChangeAbility(option.Value);
             return Result.Continue;
         }
     }
