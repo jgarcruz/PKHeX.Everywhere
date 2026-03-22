@@ -74,6 +74,20 @@ abstract class EditPokemonAttribute(Pokemon pokemon)
         }
     }
 
+    public class FriendshipAttribute(Pokemon pokemon) : SimpleAttribute(pokemon, "Friendship", () => pokemon.Friendship.ToString())
+    {
+        public override Result HandleSelection()
+        {
+            var newFriendshipString = AnsiConsole.Ask(Label, Pokemon.Friendship.ToString());
+            var parsed = int.TryParse(newFriendshipString, out int friendship);
+            if (!parsed) return Result.Continue;
+
+            Pokemon.ChangeFriendship(friendship);
+
+            return Result.Continue;
+        }
+    }
+
     // upon selecting this we need a dropdown to show with each nature enum and have the user select 1
     // highlight the one the pokemon already is
     public class NatureAttribute(Pokemon pokemon) : SimpleAttribute(pokemon, "Nature", () => pokemon.Natures.Nature.ToString())

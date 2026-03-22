@@ -99,7 +99,7 @@ public class Pokemon(PKM pokemon, Game game)
         if (pi is IPersonalAbility12H h)
             ids.Add(h.AbilityH);
 
-        return [..ids.Distinct().Select(id => AbilityRepository.Instance.Get(id))];
+        return [.. ids.Distinct().Select(id => AbilityRepository.Instance.Get(id))];
     }
 
     public void ChangeAbility(AbilityDefinition ability)
@@ -131,6 +131,12 @@ public class Pokemon(PKM pokemon, Game game)
     {
         var clamped = Math.Clamp(level, 1, 100);
         pokemon.CurrentLevel = Convert.ToByte(clamped);
+    }
+
+    public void ChangeFriendship(int friendship)
+    {
+        var clamped = Math.Clamp(friendship, 0, 255);
+        pokemon.CurrentFriendship = Convert.ToByte(clamped);
     }
 
     public void ChangeNickname(string nickname)
