@@ -2,6 +2,7 @@ using PKHeX.CLI.Base;
 using PKHeX.CLI.Extensions;
 using PKHeX.Facade.Extensions;
 using PKHeX.Facade.Pokemons;
+using PKHeX.Facade.Repositories;
 using Spectre.Console;
 using PKHeX.Core;
 
@@ -89,6 +90,27 @@ abstract class EditPokemonAttribute(Pokemon pokemon)
 
             Pokemon.ChangeNature(newNature);
 
+            return Result.Continue;
+        }
+    }
+
+    public class AbilityAttribute(Pokemon pokemon) : SimpleAttribute(pokemon, "Ability", () => pokemon.Ability.Ability.ToString())
+    {
+        public override Result HandleSelection()
+        {
+            var choices = Pokemon.GetAvailableAbilities();
+            if (choices.Count == 0)
+                return Result.Continue;
+
+            var newAbility = AnsiConsole.Prompt(
+                new SelectionPrompt<AbilityDefinition>()
+                    .Title("Select ability:")
+                    .EnableSearch()
+                    .AddChoices(choices)
+                    .UseConverter(a => a.Name)
+            );
+
+            Pokemon.ChangeAbility(newAbility);
             return Result.Continue;
         }
     }

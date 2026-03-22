@@ -89,6 +89,26 @@ public class Pokemon(PKM pokemon, Game game)
         set => pokemon.Ability = value.Id;
     }
 
+    public List<AbilityDefinition> GetAvailableAbilities()
+    {
+        var pi = Pkm.PersonalInfo;
+        if (pi is not IPersonalAbility12 a)
+            return [];
+
+        var ids = new List<int> { a.Ability1, a.Ability2 };
+        if (pi is IPersonalAbility12H h)
+            ids.Add(h.AbilityH);
+
+        return [..ids.Distinct().Select(id => AbilityRepository.Instance.Get(id))];
+    }
+
+    public void ChangeAbility(AbilityDefinition ability)
+    {
+        var index = Pkm.PersonalInfo.GetIndexOfAbility(ability.Id);
+        if (index < 0) return;
+        Pkm.RefreshAbility(index);
+    }
+
     public int Friendship
     {
         get => pokemon.CurrentFriendship;
@@ -158,7 +178,6 @@ public class Pokemon(PKM pokemon, Game game)
 
     }
 
-    // can stay as is since this wasn't a thing till gen 8
     public bool ChangeStatNature(Nature newNature)
     {
         if (newNature == Pkm.StatNature) return true;
