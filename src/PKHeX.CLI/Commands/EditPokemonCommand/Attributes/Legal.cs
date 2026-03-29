@@ -22,9 +22,9 @@ internal class Legal(Pokemon pokemon) : EditPokemonAttribute(pokemon)
     {
         var displays = _legalityAnalysis.Results.Select(a => a.Judgement switch
         {
-            Severity.Valid => $"* [green]{a.Identifier}: {a.Result.GetTemplate(LegalityCheckLocalization.Get())}[/]",
-            Severity.Fishy => $"* [yellow]{a.Identifier}: {a.Result.GetTemplate(LegalityCheckLocalization.Get())}[/]",
-            Severity.Invalid => $"* [red]{a.Identifier}: {a.Result.GetTemplate(LegalityCheckLocalization.Get())}[/]",
+            Severity.Valid => $"* [green]{Markup.Escape(a.Identifier + ": " + a.Result.GetTemplate(LegalityCheckLocalization.Get()))}[/]",
+            Severity.Fishy => $"* [yellow]{Markup.Escape(a.Identifier + ": " + a.Result.GetTemplate(LegalityCheckLocalization.Get()))}[/]",
+            Severity.Invalid => $"* [red]{Markup.Escape(a.Identifier + ": " + a.Result.GetTemplate(LegalityCheckLocalization.Get()))}[/]",
             _ => string.Empty,
         });
 
