@@ -4,12 +4,13 @@ using Spectre.Console;
 
 namespace PKHeX.CLI.Commands.EditPokemonCommand.Attributes;
 
-class Stats(Pokemon pokemon) : EditPokemonAttribute(pokemon)
+class StatsAttribute(Pokemon pokemon) : EditPokemonAttribute(pokemon)
 {
     protected override string Label => "Stats";
     protected override string Value => $"[yellow]Base:[/] {Pokemon.BaseStats.Total,-3} " +
                                        $"[yellow]IVs:[/] {Pokemon.IVs.Total,-3} " +
-                                       $"[yellow]EVs:[/] {Pokemon.EVs.Total,-3} ";
+                                       $"[yellow]EVs:[/] {Pokemon.EVs.Total,-3} " +
+                                       $"[yellow]Stats:[/] {Pokemon.ResultStats.Total,-3} ";
 
     public override Result HandleSelection()
     {
@@ -20,8 +21,9 @@ class Stats(Pokemon pokemon) : EditPokemonAttribute(pokemon)
                 new BaseStats(Pokemon),
                 new IV(Pokemon),
                 new EV(Pokemon),
+                new ResultStats(Pokemon),
             ];
-            
+
             var selectedOption = AnsiConsole.Prompt(new SelectionPrompt<OptionOrBack>()
                 .Title(Display)
                 .PageSize(10)
@@ -34,7 +36,7 @@ class Stats(Pokemon pokemon) : EditPokemonAttribute(pokemon)
                 ? attributeOption.Value.HandleSelection()
                 : Result.Exit;
         });
-        
+
         return Result.Continue;
     }
 }

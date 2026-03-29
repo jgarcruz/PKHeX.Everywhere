@@ -13,13 +13,13 @@ public class PokemonPartyTests
         game.Trainer.Party.Pokemons.Should().HaveCountGreaterThan(0);
         game.Trainer.Party.Pokemons.Should().AllSatisfy(p =>
         {
-            p.BaseStats.Attack.Should().BeGreaterThan(0);
-            p.BaseStats.Defense.Should().BeGreaterThan(0);
-            p.BaseStats.Health.Should().BeGreaterThan(0);
-            p.BaseStats.Speed.Should().BeGreaterThan(0);
-            p.BaseStats.Total.Should().BeGreaterThan(0);
-            p.BaseStats.SpecialAttack.Should().BeGreaterThan(0);
-            p.BaseStats.SpecialDefense.Should().BeGreaterThan(0);
+            p.ResultStats.Attack.Should().BeGreaterThan(0);
+            p.ResultStats.Defense.Should().BeGreaterThan(0);
+            p.ResultStats.Health.Should().BeGreaterThan(0);
+            p.ResultStats.Speed.Should().BeGreaterThan(0);
+            p.ResultStats.Total.Should().BeGreaterThan(0);
+            p.ResultStats.SpecialAttack.Should().BeGreaterThan(0);
+            p.ResultStats.SpecialDefense.Should().BeGreaterThan(0);
         });
     }
 
@@ -29,13 +29,13 @@ public class PokemonPartyTests
     {
         var game = Game.LoadFrom(saveFile);
         var firstPokemon = game.Trainer.Party.Pokemons.First();
-        
+
         firstPokemon.IsShiny.Should().BeFalse();
-        
+
         firstPokemon.SetShiny(true);
-        
+
         firstPokemon.IsShiny.Should().BeTrue();
-        
+
         game.SaveAndReload(savedGame =>
         {
             var savedPokemon = savedGame.Trainer.Party.Pokemons.First();

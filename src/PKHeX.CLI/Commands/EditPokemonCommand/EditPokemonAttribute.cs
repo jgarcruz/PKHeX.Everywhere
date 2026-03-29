@@ -168,5 +168,6 @@ abstract class EditPokemonAttribute(Pokemon pokemon)
 
     public class IV(Pokemon pokemon) : PokemonStatsBaseAttribute(pokemon, "IV", pokemon.IVs);
 
+    public class ResultStats(Pokemon pokemon) : PokemonStatsBaseAttribute(pokemon, "Stats", pokemon.ResultStats);
     public class BaseStats(Pokemon pokemon) : PokemonStatsBaseAttribute(pokemon, "Base", pokemon.BaseStats);
 }

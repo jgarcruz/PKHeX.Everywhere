@@ -5,7 +5,7 @@ using PKHeX.Facade.Extensions;
 using PKHeX.Facade.Pokemons;
 using Spectre.Console;
 using MetConditions = PKHeX.CLI.Commands.EditPokemonCommand.Attributes.MetConditions;
-using Stats = PKHeX.CLI.Commands.EditPokemonCommand.Attributes.Stats;
+using StatsAttribute = PKHeX.CLI.Commands.EditPokemonCommand.Attributes.StatsAttribute;
 
 namespace PKHeX.CLI.Commands.EditPokemonCommand;
 
@@ -30,7 +30,7 @@ public static class EditPokemon
 
                 new MetConditions(pokemon),
                 new ChangeMoves(pokemon),
-                new Stats(pokemon),
+                new StatsAttribute(pokemon),
             ];
 
             attributes = attributes.Where(a => !a.Hidden);

@@ -64,6 +64,7 @@ public class Pokemon(PKM pokemon, Game game)
     public Stats EVs => Stats.EvFrom(pokemon);
     public Stats IVs => Stats.IvFrom(pokemon);
     public Stats BaseStats => Stats.BaseFrom(pokemon);
+    public Stats ResultStats => Stats.ResultStatsFrom(pokemon);
     public Stats? AVs => pokemon is IAwakened ? Stats.AvFrom(pokemon) : null;
     public PokemonMove Move1 => new(pokemon, PokemonMove.MoveIndex.Move1);
     public PokemonMove Move2 => new(pokemon, PokemonMove.MoveIndex.Move2);

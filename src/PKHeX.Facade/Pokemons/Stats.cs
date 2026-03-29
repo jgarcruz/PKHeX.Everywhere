@@ -19,7 +19,8 @@ public record Stats(PKM Pokemon, Stats.StatsType Type, bool VirtualStats = false
     {
         get => Type switch
         {
-            StatsType.Base => Pokemon.Stat_ATK,
+            StatsType.Base => Pokemon.PersonalInfo.ATK,
+            StatsType.Stats => Pokemon.Stat_ATK,
             StatsType.EV => Pokemon.EV_ATK,
             StatsType.IV => Pokemon.IV_ATK,
             StatsType.AV => _awakened?.AV_ATK ?? 0,
@@ -27,7 +28,7 @@ public record Stats(PKM Pokemon, Stats.StatsType Type, bool VirtualStats = false
         };
         set => _ = Type switch
         {
-            StatsType.Base => Pokemon.Stat_ATK = value,
+            StatsType.Stats => Pokemon.Stat_ATK = value,
             StatsType.EV => Pokemon.EV_ATK = value,
             StatsType.IV => Pokemon.IV_ATK = value,
             StatsType.AV => _awakened!.AV_ATK = (byte)value,
@@ -39,7 +40,8 @@ public record Stats(PKM Pokemon, Stats.StatsType Type, bool VirtualStats = false
     {
         get => Type switch
         {
-            StatsType.Base => Pokemon.Stat_DEF,
+            StatsType.Base => Pokemon.PersonalInfo.DEF,
+            StatsType.Stats => Pokemon.Stat_DEF,
             StatsType.EV => Pokemon.EV_DEF,
             StatsType.IV => Pokemon.IV_DEF,
             StatsType.AV => _awakened?.AV_DEF ?? 0,
@@ -47,7 +49,7 @@ public record Stats(PKM Pokemon, Stats.StatsType Type, bool VirtualStats = false
         };
         set => _ = Type switch
         {
-            StatsType.Base => Pokemon.Stat_DEF = value,
+            StatsType.Stats => Pokemon.Stat_DEF = value,
             StatsType.EV => Pokemon.EV_DEF = value,
             StatsType.IV => Pokemon.IV_DEF = value,
             StatsType.AV => _awakened!.AV_DEF = (byte)value,
@@ -59,7 +61,8 @@ public record Stats(PKM Pokemon, Stats.StatsType Type, bool VirtualStats = false
     {
         get => Type switch
         {
-            StatsType.Base => Pokemon.Stat_SPA,
+            StatsType.Base => Pokemon.PersonalInfo.SPA,
+            StatsType.Stats => Pokemon.Stat_SPA,
             StatsType.EV => Pokemon.EV_SPA,
             StatsType.IV => Pokemon.IV_SPA,
             StatsType.AV => _awakened?.AV_SPA ?? 0,
@@ -67,7 +70,7 @@ public record Stats(PKM Pokemon, Stats.StatsType Type, bool VirtualStats = false
         };
         set => _ = Type switch
         {
-            StatsType.Base => Pokemon.Stat_SPA = value,
+            StatsType.Stats => Pokemon.Stat_SPA = value,
             StatsType.EV => Pokemon.EV_SPA = value,
             StatsType.IV => Pokemon.IV_SPA = value,
             StatsType.AV => _awakened!.AV_SPA = (byte)value,
@@ -79,7 +82,8 @@ public record Stats(PKM Pokemon, Stats.StatsType Type, bool VirtualStats = false
     {
         get => Type switch
         {
-            StatsType.Base => Pokemon.Stat_SPD,
+            StatsType.Base => Pokemon.PersonalInfo.SPD,
+            StatsType.Stats => Pokemon.Stat_SPD,
             StatsType.EV => Pokemon.EV_SPD,
             StatsType.IV => Pokemon.IV_SPD,
             StatsType.AV => _awakened?.AV_SPD ?? 0,
@@ -87,7 +91,7 @@ public record Stats(PKM Pokemon, Stats.StatsType Type, bool VirtualStats = false
         };
         set => _ = Type switch
         {
-            StatsType.Base => Pokemon.Stat_SPD = value,
+            StatsType.Stats => Pokemon.Stat_SPD = value,
             StatsType.EV => Pokemon.EV_SPD = value,
             StatsType.IV => Pokemon.IV_SPD = value,
             StatsType.AV => _awakened!.AV_SPD = (byte)value,
@@ -99,7 +103,8 @@ public record Stats(PKM Pokemon, Stats.StatsType Type, bool VirtualStats = false
     {
         get => Type switch
         {
-            StatsType.Base => Pokemon.Stat_HPMax,
+            StatsType.Base => Pokemon.PersonalInfo.HP,
+            StatsType.Stats => Pokemon.Stat_HPMax,
             StatsType.EV => Pokemon.EV_HP,
             StatsType.IV => Pokemon.IV_HP,
             StatsType.AV => _awakened?.AV_HP ?? 0,
@@ -107,7 +112,7 @@ public record Stats(PKM Pokemon, Stats.StatsType Type, bool VirtualStats = false
         };
         set => _ = Type switch
         {
-            StatsType.Base => Pokemon.Stat_HPMax = value,
+            StatsType.Stats => Pokemon.Stat_HPMax = value,
             StatsType.EV => Pokemon.EV_HP = value,
             StatsType.IV => Pokemon.IV_HP = value,
             StatsType.AV => _awakened!.AV_HP = (byte)value,
@@ -119,7 +124,8 @@ public record Stats(PKM Pokemon, Stats.StatsType Type, bool VirtualStats = false
     {
         get => Type switch
         {
-            StatsType.Base => Pokemon.Stat_SPE,
+            StatsType.Base => Pokemon.PersonalInfo.SPE,
+            StatsType.Stats => Pokemon.Stat_SPE,
             StatsType.EV => Pokemon.EV_SPE,
             StatsType.IV => Pokemon.IV_SPE,
             StatsType.AV => _awakened?.AV_SPE ?? 0,
@@ -127,7 +133,7 @@ public record Stats(PKM Pokemon, Stats.StatsType Type, bool VirtualStats = false
         };
         set => _ = Type switch
         {
-            StatsType.Base => Pokemon.Stat_SPE = value,
+            StatsType.Stats => Pokemon.Stat_SPE = value,
             StatsType.EV => Pokemon.EV_SPE = value,
             StatsType.IV => Pokemon.IV_SPE = value,
             StatsType.AV => _awakened!.AV_SPE = (byte)value,
@@ -139,14 +145,14 @@ public record Stats(PKM Pokemon, Stats.StatsType Type, bool VirtualStats = false
     {
         get
         {
-            if (Type is not StatsType.Base) return null;
+            if (Type is not StatsType.Stats) return null;
             return Pokemon is ICombatPower combatPower
                 ? combatPower.Stat_CP
                 : null;
         }
         set
         {
-            if (Type is not StatsType.Base) throw new InvalidOperationException($"stats type {Type} not supported");
+            if (Type is not StatsType.Stats) throw new InvalidOperationException($"stats type {Type} not supported");
             if (Pokemon is ICombatPower combatPower)
             {
                 combatPower.Stat_CP = value ?? 0;
@@ -159,6 +165,7 @@ public record Stats(PKM Pokemon, Stats.StatsType Type, bool VirtualStats = false
     public enum StatsType
     {
         Base,
+        Stats,
         EV,
         IV,
         AV,
@@ -167,17 +174,18 @@ public record Stats(PKM Pokemon, Stats.StatsType Type, bool VirtualStats = false
     public static Stats EvFrom(PKM pokemon) => new(pokemon, StatsType.EV);
     public static Stats IvFrom(PKM pokemon) => new(pokemon, StatsType.IV);
     public static Stats AvFrom(PKM pokemon) => new(pokemon, StatsType.AV);
+    public static Stats BaseFrom(PKM pokemon) => new(pokemon, StatsType.Base);
 
-    public static Stats BaseFrom(PKM pokemon)
+    public static Stats ResultStatsFrom(PKM pokemon)
     {
         var virtualStats = !pokemon.PartyStatsPresent;
         if (virtualStats)
         {
             var pokemonToBeUsed = pokemon.Clone();
             pokemonToBeUsed.ResetPartyStats();
-            return new Stats(pokemonToBeUsed, StatsType.Base, true);
+            return new Stats(pokemonToBeUsed, StatsType.Stats, true);
         }
 
-        return new Stats(pokemon, StatsType.Base, virtualStats);
+        return new Stats(pokemon, StatsType.Stats, virtualStats);
     }
 }
