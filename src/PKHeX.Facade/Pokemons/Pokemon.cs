@@ -14,6 +14,7 @@ public class Pokemon(PKM pokemon, Game game)
     public PKM Pkm => pokemon;
     public Game Game => game;
     public byte Generation => pokemon.Generation;
+    public byte Format => pokemon.Format;
 
 
     public ItemDefinition Ball
@@ -172,7 +173,7 @@ public class Pokemon(PKM pokemon, Game game)
         if (newNature == Pkm.Nature) return true;
 
         var oldNature = Pkm.Nature;
-        if (Generation < 5)
+        if (Format < 5)
         {
             Pkm.SetPIDNature(newNature);
             return Pkm.Nature != oldNature;
