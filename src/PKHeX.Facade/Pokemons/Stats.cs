@@ -178,14 +178,8 @@ public record Stats(PKM Pokemon, Stats.StatsType Type, bool VirtualStats = false
 
     public static Stats ResultStatsFrom(PKM pokemon)
     {
-        var virtualStats = !pokemon.PartyStatsPresent;
-        if (virtualStats)
-        {
-            var pokemonToBeUsed = pokemon.Clone();
-            pokemonToBeUsed.ResetPartyStats();
-            return new Stats(pokemonToBeUsed, StatsType.Stats, true);
-        }
-
-        return new Stats(pokemon, StatsType.Stats, virtualStats);
+        var pokemonToBeUsed = pokemon.Clone();
+        pokemonToBeUsed.ResetPartyStats();
+        return new Stats(pokemonToBeUsed, StatsType.Stats, true);
     }
 }

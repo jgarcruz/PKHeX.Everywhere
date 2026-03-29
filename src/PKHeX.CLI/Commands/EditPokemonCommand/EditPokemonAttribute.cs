@@ -154,19 +154,99 @@ abstract class EditPokemonAttribute(Pokemon pokemon)
     public abstract class PokemonStatsBaseAttribute(Pokemon pokemon, string label, Stats stats)
         : SimpleAttribute(pokemon, label, string.Empty)
     {
-        public override string Display => $"[yellow]{Label}:[/]{Environment.NewLine}   " +
-                                          $"HP {stats.Health,-3} " +
-                                          $"Atk {stats.Attack,-3} " +
-                                          $"Def {stats.Defense,-3} " +
-                                          $"SpA {stats.SpecialAttack,-3} " +
-                                          $"SpD {stats.SpecialDefense,-3} " +
-                                          $"Spe {stats.Speed,-3} " +
-                                          $"Total {stats.Total,-3} ";
+        private static string StatsLine(Stats s) =>
+            $"HP {s.Health,-3} Atk {s.Attack,-3} Def {s.Defense,-3} SpA {s.SpecialAttack,-3} SpD {s.SpecialDefense,-3} Spe {s.Speed,-3} Total {s.Total,-3}";
+
+        public override string Display => $"[yellow]{Label}:[/]{Environment.NewLine}   {StatsLine(stats)}";
+
+        protected string DisplayWithBase =>
+            Display + Environment.NewLine +
+            $"   [yellow]Base:[/] {StatsLine(Pokemon.BaseStats)}";
     }
 
-    public class EV(Pokemon pokemon) : PokemonStatsBaseAttribute(pokemon, "EV", pokemon.EVs);
+    private class StatEditAttribute(
+        Pokemon pokemon,
+        string name,
+        Func<int> getter,
+        Action<int> setter,
+        int min,
+        int max,
+        Func<int>? availableBudget = null)
+        : SimpleAttribute(pokemon, name, () => getter().ToString())
+    {
+        public override Result HandleSelection()
+        {
+            var input = AnsiConsole.Ask(Label, getter().ToString());
+            if (!int.TryParse(input, out int value)) return Result.Continue;
+            value = Math.Clamp(value, min, max);
+            if (availableBudget is not null)
+                value = Math.Min(value, availableBudget());
+            setter(value);
+            return Result.Continue;
+        }
+    }
 
-    public class IV(Pokemon pokemon) : PokemonStatsBaseAttribute(pokemon, "IV", pokemon.IVs);
+    public class EV(Pokemon pokemon) : PokemonStatsBaseAttribute(pokemon, "EV", pokemon.EVs)
+    {
+        private const int MaxTotal = 510;
+
+        public override Result HandleSelection()
+        {
+            RepeatUntilExit(() =>
+            {
+                var evs = Pokemon.EVs;
+                IEnumerable<EditPokemonAttribute> options =
+                [
+                    Stat("HP",  () => evs.Health,         v => evs.Health         = v, () => evs.Health),
+                    Stat("Atk", () => evs.Attack,         v => evs.Attack         = v, () => evs.Attack),
+                    Stat("Def", () => evs.Defense,        v => evs.Defense        = v, () => evs.Defense),
+                    Stat("SpA", () => evs.SpecialAttack,  v => evs.SpecialAttack  = v, () => evs.SpecialAttack),
+                    Stat("SpD", () => evs.SpecialDefense, v => evs.SpecialDefense = v, () => evs.SpecialDefense),
+                    Stat("Spe", () => evs.Speed,          v => evs.Speed          = v, () => evs.Speed),
+                ];
+                var selected = AnsiConsole.Prompt(new SelectionPrompt<OptionOrBack>()
+                    .Title(DisplayWithBase)
+                    .AddChoices(OptionOrBack.WithValues(options, o => o.Display))
+                    .WrapAround());
+                return selected is OptionOrBack.Option<EditPokemonAttribute> opt
+                    ? opt.Value.HandleSelection()
+                    : Result.Exit;
+            });
+            return Result.Continue;
+        }
+
+        private StatEditAttribute Stat(string name, Func<int> getter, Action<int> setter, Func<int> current)
+            => new(Pokemon, name, getter, setter, 0, 255,
+                   availableBudget: () => MaxTotal - Pokemon.EVs.Total + current());
+    }
+
+    public class IV(Pokemon pokemon) : PokemonStatsBaseAttribute(pokemon, "IV", pokemon.IVs)
+    {
+        public override Result HandleSelection()
+        {
+            RepeatUntilExit(() =>
+            {
+                var ivs = Pokemon.IVs;
+                IEnumerable<EditPokemonAttribute> options =
+                [
+                    new StatEditAttribute(Pokemon, "HP",  () => ivs.Health,         v => ivs.Health         = v, 0, 31),
+                    new StatEditAttribute(Pokemon, "Atk", () => ivs.Attack,         v => ivs.Attack         = v, 0, 31),
+                    new StatEditAttribute(Pokemon, "Def", () => ivs.Defense,        v => ivs.Defense        = v, 0, 31),
+                    new StatEditAttribute(Pokemon, "SpA", () => ivs.SpecialAttack,  v => ivs.SpecialAttack  = v, 0, 31),
+                    new StatEditAttribute(Pokemon, "SpD", () => ivs.SpecialDefense, v => ivs.SpecialDefense = v, 0, 31),
+                    new StatEditAttribute(Pokemon, "Spe", () => ivs.Speed,          v => ivs.Speed          = v, 0, 31),
+                ];
+                var selected = AnsiConsole.Prompt(new SelectionPrompt<OptionOrBack>()
+                    .Title(DisplayWithBase)
+                    .AddChoices(OptionOrBack.WithValues(options, o => o.Display))
+                    .WrapAround());
+                return selected is OptionOrBack.Option<EditPokemonAttribute> opt
+                    ? opt.Value.HandleSelection()
+                    : Result.Exit;
+            });
+            return Result.Continue;
+        }
+    }
 
     public class ResultStats(Pokemon pokemon) : PokemonStatsBaseAttribute(pokemon, "Stats", pokemon.ResultStats);
     public class BaseStats(Pokemon pokemon) : PokemonStatsBaseAttribute(pokemon, "Base", pokemon.BaseStats);
