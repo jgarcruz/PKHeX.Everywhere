@@ -13,11 +13,14 @@ const config: FirebaseOptions = {
 }
 
 export function initFirebase() {
-    // disabled for now
-    // if (import.meta.env.VITE_FIREBASE_ENABLED !== 'true') {
-    //     return    
-    // }
-    
+    window.isSignedIn = () => false
+    window.getAuthToken = async () => { throw new Error('Firebase not initialized') }
+    window.signInAnonymously = async () => { throw new Error('Firebase not initialized') }
+    window.getSignedInUser = () => null
+    window.signOut = async () => {}
+
+    if (import.meta.env.VITE_FIREBASE_ENABLED !== 'true') return
+
     const app = initializeApp(config)
     const auth = getAuth(app)
     
